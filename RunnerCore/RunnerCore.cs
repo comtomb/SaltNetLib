@@ -74,9 +74,18 @@ namespace Runner
             var decrypted = cryptoBox.DecryptSymmetric(sharedKeyBobFromAlice, nonce, encrypted);
             string receivedMessage = Encoding.ASCII.GetString(decrypted);
             Console.WriteLine("bob received: " + receivedMessage);
-            
 
-            
+            //Console.WriteLine();
+            //Console.Write("now we change a single bit in the transmitted message... ");
+            //try
+            //{
+            //    encrypted[50] ^= 64;
+            //    cryptoBox.DecryptSymmetric(sharedKeyBobFromAlice, nonce, encrypted);
+            //} catch( DecryptionException e)
+            //{
+            //    Console.WriteLine("... and the decryption fails: " + e.Message);
+            //}
+
         }
     }
 }

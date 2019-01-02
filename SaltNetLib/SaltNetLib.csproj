@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
     <Platforms>AnyCPU</Platforms>
     <Authors>tomb</Authors>
-    <Company>tomb</Company>
+    <Company>comtomb</Company>
     <Product>SaltNetLib</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.3</Version>
@@ -18,8 +18,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DefineConstants>TRACE;RELEASE;TFM_NETSTANDARD20;CPU_ANY</DefineConstants>
-    <DocumentationFile>C:\Users\Thomas\develop\SaltNetLib\SaltNetLib\bin\Release\SaltNetLib.xml</DocumentationFile>
-    <OutputPath></OutputPath>
+    <DocumentationFile>bin\release\SaltNetLib.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net451|AnyCPU'">
@@ -28,6 +27,17 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|AnyCPU'">
     <DefineConstants>TRACE;RELEASE;TFM_NET451;CPU_ANY</DefineConstants>
+    <DocumentationFile>bin\release\SaltNetLib.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Authors>comtomb</Authors>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <Copyright>2019 by comtomb</Copyright>
+    <PackageProjectUrl>https://github.com/comtomb/SaltNetLib</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/comtomb/SaltNetLib</RepositoryUrl>
+    <Description>C# implementation of Curve25519XSalsa20Poly1305</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +49,16 @@
 
   <ItemGroup>
     <PackageReference Include="ByteUtilNetLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

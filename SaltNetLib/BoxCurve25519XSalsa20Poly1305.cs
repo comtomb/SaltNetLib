@@ -404,7 +404,7 @@ namespace TomB.SaltNet
             return secureRandom;
         }
         /// <summary>
-        /// <see cref="IBoxCurve25519XSalsa20Poly1305.RandomNonce"/>
+        /// <see cref="IBoxCurve25519XSalsa20Poly1305.RandomNonce()"/>
         /// </summary>
         /// <returns></returns>
         public byte[] RandomNonce()
