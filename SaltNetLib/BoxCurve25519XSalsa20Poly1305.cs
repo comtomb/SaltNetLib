@@ -78,7 +78,7 @@ namespace TomB.SaltNet
                 throw new ArgumentNullException();
             if (cOfs < 0 || msgOfs < 0 || nonceOfs < 0 || sharedKeyOfs < 0)
                 throw new ArgumentException();
-            if (c.Length - cOfs < msgLen || msg.Length-msgOfs<msgLen || nonce.Length-nonceOfs<24 || sharedKey.Length-sharedKeyOfs<32)
+            if (c.Length - cOfs < msgLen || msg.Length - msgOfs < msgLen || nonce.Length - nonceOfs < 24 || sharedKey.Length - sharedKeyOfs < 32)
                 throw new ArgumentException();
 
             // encrypt
@@ -99,7 +99,7 @@ namespace TomB.SaltNet
         /// <param name="nonceOfs"></param>
         /// <param name="sharedKey"></param>
         /// <param name="sharedKeyOfs"></param>
-        public void OpenAfterNm(byte[] msg,int msgOfs, byte[] c, int cOfs,int cLen, byte[] nonce,int nonceOfs,byte[] sharedKey,int sharedKeyOfs)
+        public void OpenAfterNm(byte[] msg, int msgOfs, byte[] c, int cOfs, int cLen, byte[] nonce, int nonceOfs, byte[] sharedKey, int sharedKeyOfs)
         {
             if (c == null || msg == null || nonce == null || sharedKey == null)
                 throw new ArgumentNullException();
@@ -108,24 +108,24 @@ namespace TomB.SaltNet
             if (msg.Length - msgOfs < cLen - 16 || nonce.Length - nonceOfs < 24 || sharedKey.Length - sharedKeyOfs < 32)
                 throw new ArgumentException();
 
-            
+
             // subkey
             var subkey = new byte[32];
             GetXSalsa20().HSalsa20(subkey, 0, nonce, 0, sharedKey, 0, null, 0);
-		    
-            // Poly1305 check
-            var poly1305Key=new byte[32];
-            GetXSalsa20().Salsa20(poly1305Key,0,32,nonce,nonceOfs+16,subkey,0);                       
 
-            var poly1305mac=new byte[16];
-            GetPoly1305().Poly1305(poly1305mac,0,c,cOfs+32,cLen-32,poly1305Key,0);            
-            for(int i=0;i<16;i++)
-            	if( poly1305mac[i]!=c[cOfs+i+16])
-            		throw new DecryptionException("poly1305 check failed");            
-            
-			// decrypt
-            GetXSalsa20().Salsa20XorIC(msg,msgOfs,c,cOfs,cLen,nonce,nonceOfs+16,subkey,0,null,0);
-        	
+            // Poly1305 check
+            var poly1305Key = new byte[32];
+            GetXSalsa20().Salsa20(poly1305Key, 0, 32, nonce, nonceOfs + 16, subkey, 0);
+
+            var poly1305mac = new byte[16];
+            GetPoly1305().Poly1305(poly1305mac, 0, c, cOfs + 32, cLen - 32, poly1305Key, 0);
+            for (int i = 0; i < 16; i++)
+                if (poly1305mac[i] != c[cOfs + i + 16])
+                    throw new DecryptionException("poly1305 check failed");
+
+            // decrypt
+            GetXSalsa20().Salsa20XorIC(msg, msgOfs, c, cOfs, cLen, nonce, nonceOfs + 16, subkey, 0, null, 0);
+
         }
         /// <summary>
         /// <see cref="IBoxCurve25519XSalsa20Poly1305.BeforeNm(byte[], byte[])"/>
@@ -145,10 +145,34 @@ namespace TomB.SaltNet
             if (sharedKey.Length - sharedKeyOfs < 32 || publicKey.Length - publicKeyOfs < 32 || secretKey.Length - secretKeyOfs < 32)
                 throw new ArgumentException();
             var tmp = new byte[32];
-            GetCurve25519().ScalarMultiplication(tmp,0,  publicKey, publicKeyOfs, secretKey, secretKeyOfs);
+            GetCurve25519().ScalarMultiplication(tmp, 0, publicKey, publicKeyOfs, secretKey, secretKeyOfs);
             GetXSalsa20().HSalsa20(sharedKey, sharedKeyOfs, new byte[16], 0, tmp, 0, null, 0);
         }
-
+        /// <summary>
+        /// <see cref="IBoxCurve25519XSalsa20Poly1305.CreateSharedKey(byte[], int, byte[], int, byte[], int)"/>
+        /// </summary>
+        /// <param name="sharedKey"></param>
+        /// <param name="sharedKeyOfs"></param>
+        /// <param name="publicKey"></param>
+        /// <param name="publicKeyOfs"></param>
+        /// <param name="secretKey"></param>
+        /// <param name="secretKeyOfs"></param>
+        public void CreateSharedKey(byte[] sharedKey, int sharedKeyOfs, byte[] publicKey, int publicKeyOfs, byte[] secretKey, int secretKeyOfs)
+        {
+            BeforeNm(sharedKey, sharedKeyOfs, publicKey, publicKeyOfs, secretKey, secretKeyOfs);
+        }
+        /// <summary>
+        /// <see cref="IBoxCurve25519XSalsa20Poly1305.CreateSharedKey(byte[], byte[])"/>
+        /// </summary>
+        /// <param name="publicKey"></param>
+        /// <param name="secretKey"></param>
+        /// <returns></returns>
+        public byte[] CreateSharedKey(byte[] publicKey, byte[] secretKey)
+        {
+            byte[] sharedKey = new byte[32];
+            CreateSharedKey(sharedKey, 0, publicKey, 0, secretKey, 0);
+            return sharedKey;
+        }
         /// <summary>
         /// <see cref="IBoxCurve25519XSalsa20Poly1305.DecryptSymmetric(byte[], int, byte[], int, byte[], int, byte[], int, int)"/>
         /// </summary>
@@ -167,17 +191,17 @@ namespace TomB.SaltNet
                 throw new ArgumentNullException();
             if (decryptedDataOfs < 0 || sharedKeyOfs < 0 || nonceOfs < 0 || encryptedDataOfs < 0 || encryptedDataLen < 0)
                 throw new ArgumentException();
-            if (decryptedData.Length - decryptedDataOfs < encryptedDataLen - 16 || sharedKey.Length-sharedKeyOfs<32 || nonce.Length-nonceOfs<24 || encryptedData.Length-encryptedDataOfs<encryptedDataLen)
+            if (decryptedData.Length - decryptedDataOfs < encryptedDataLen - 16 || sharedKey.Length - sharedKeyOfs < 32 || nonce.Length - nonceOfs < 24 || encryptedData.Length - encryptedDataOfs < encryptedDataLen)
                 throw new ArgumentException();
 
-			// expand encyrypted data             
-            var expandedEnc=new byte[encryptedDataLen+16];
-            Array.Copy(encryptedData,encryptedDataOfs,expandedEnc,16,encryptedDataLen);
-            var tmpDec=new byte[encryptedDataLen+16];
-           
-            OpenAfterNm(tmpDec,0,expandedEnc,0,expandedEnc.Length,nonce,nonceOfs,sharedKey,sharedKeyOfs);
-            
-            Array.Copy(tmpDec,32,decryptedData,decryptedDataOfs,encryptedDataLen-16);
+            // expand encyrypted data             
+            var expandedEnc = new byte[encryptedDataLen + 16];
+            Array.Copy(encryptedData, encryptedDataOfs, expandedEnc, 16, encryptedDataLen);
+            var tmpDec = new byte[encryptedDataLen + 16];
+
+            OpenAfterNm(tmpDec, 0, expandedEnc, 0, expandedEnc.Length, nonce, nonceOfs, sharedKey, sharedKeyOfs);
+
+            Array.Copy(tmpDec, 32, decryptedData, decryptedDataOfs, encryptedDataLen - 16);
         }
         /// <summary>
         /// <see cref="IBoxCurve25519XSalsa20Poly1305.DecryptSymmetric(byte[], byte[], byte[])"/>
@@ -188,13 +212,13 @@ namespace TomB.SaltNet
         /// <returns></returns>
         public byte[] DecryptSymmetric(byte[] sharedKey, byte[] nonce, byte[] encryptedData)
         {
-            if (sharedKey == null || nonce == null || encryptedData != null)
+            if (sharedKey == null || nonce == null || encryptedData == null)
                 throw new ArgumentNullException();
             if (nonce.Length != 24 || sharedKey.Length != 32 || encryptedData.Length < 16)
                 throw new ArgumentException();
 
-            var dec=new byte[encryptedData.Length-16];
-            DecryptSymmetric(dec,0,sharedKey,0,nonce,0,encryptedData,0,encryptedData.Length);
+            var dec = new byte[encryptedData.Length - 16];
+            DecryptSymmetric(dec, 0, sharedKey, 0, nonce, 0, encryptedData, 0, encryptedData.Length);
             return dec;
         }
         /// <summary>
@@ -218,7 +242,7 @@ namespace TomB.SaltNet
             if (encryptedData.Length - encryptedDataOfs < plainDataLen + 16 || sharedKey.Length - sharedKeyOfs < 32 || nonce.Length - nonceOfs < 24 || plainData.Length - plainDataOfs < plainDataLen)
                 throw new ArgumentException();
 
-            
+
             var tmpRaw = new byte[plainDataLen + 32];
             var tmpEnc = new byte[plainDataLen + 32];
             Array.Copy(plainData, plainDataOfs, tmpRaw, 32, plainDataLen);
@@ -235,9 +259,9 @@ namespace TomB.SaltNet
         /// <returns></returns>
         public byte[] EncryptSymmetric(byte[] sharedKey, byte[] nonce, byte[] plainData)
         {
-            if (sharedKey == null || nonce == null || plainData != null)
+            if (sharedKey == null || nonce == null || plainData == null)
                 throw new ArgumentNullException();
-            if (nonce.Length != 24 || sharedKey.Length != 32 )
+            if (nonce.Length != 24 || sharedKey.Length != 32)
                 throw new ArgumentException();
 
             byte[] encrypted = new byte[plainData.Length + 16];
@@ -378,6 +402,29 @@ namespace TomB.SaltNet
             if (secureRandom == null)
                 secureRandom = SecureRandomFactory.CreateInstance();
             return secureRandom;
+        }
+        /// <summary>
+        /// <see cref="IBoxCurve25519XSalsa20Poly1305.RandomNonce"/>
+        /// </summary>
+        /// <returns></returns>
+        public byte[] RandomNonce()
+        {
+            return GetSecureRandom().GetBytes(24);
+        }
+        /// <summary>
+        /// <see cref="IBoxCurve25519XSalsa20Poly1305.RandomNonce(byte[], int)"/>
+        /// </summary>
+        /// <param name="nonce"></param>
+        /// <param name="nonceOfs"></param>
+        public void RandomNonce(byte[] nonce, int nonceOfs)
+        {
+            if (nonce == null)
+                throw new ArgumentNullException();
+            if (nonceOfs < 0)
+                throw new ArgumentException();
+            if (nonce.Length - nonceOfs < 24)
+                throw new ArgumentException();
+            GetSecureRandom().Randomize(nonce, nonceOfs, 24);
         }
     }
 }

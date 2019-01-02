@@ -124,6 +124,7 @@ namespace TomB.SaltNet
         void EncryptSymmetric(byte[] encryptedData,int encryptedDataOfs,byte[] sharedKey,int sharedKeyOfs, byte[] nonce, int nonceOfs,byte[] plainData,int plainDataOfs,int plainDataLen);
         /// <summary>
         /// Shared Key calculation
+        /// use <see cref="IBoxCurve25519XSalsa20Poly1305.CreateSharedKey(byte[], int, byte[], int, byte[], int)"/> instead
         /// </summary>
         /// <param name="sharedKey"></param>
         /// <param name="sharedKeyOfs"></param>
@@ -132,6 +133,23 @@ namespace TomB.SaltNet
         /// <param name="secretKey"></param>
         /// <param name="secretKeyOfs"></param>
         void BeforeNm(byte[] sharedKey,int sharedKeyOfs,byte[] publicKey, int publicKeyOfs, byte[] secretKey, int secretKeyOfs);
+        /// <summary>
+        /// Shared Key calculation
+        /// </summary>
+        /// <param name="sharedKey"></param>
+        /// <param name="sharedKeyOfs"></param>
+        /// <param name="publicKey"></param>
+        /// <param name="publicKeyOfs"></param>
+        /// <param name="secretKey"></param>
+        /// <param name="secretKeyOfs"></param>
+        void CreateSharedKey(byte[] sharedKey, int sharedKeyOfs, byte[] publicKey, int publicKeyOfs, byte[] secretKey, int secretKeyOfs);
+        /// <summary>
+        /// Create a shared Key
+        /// </summary>
+        /// <param name="publicKey"></param>
+        /// <param name="secretKey"></param>
+        /// <returns></returns>
+        byte[] CreateSharedKey(byte[] publicKey, byte[] secretKey);
         /// <summary>
         /// Shared Key calculation
         /// </summary>
@@ -186,6 +204,19 @@ namespace TomB.SaltNet
         /// <param name="publicKey"></param>
         /// <param name="privateKey"></param>
         void CreateKeyPair(out byte[] publicKey, out byte[] privateKey);
+
+        /// <summary>
+        /// create a random 24 byte nonce
+        /// </summary>
+        /// <returns></returns>
+        byte[] RandomNonce();
+        /// <summary>
+        /// fill a buffer with 24 random bytes as nonce
+        /// </summary>
+        /// <param name="nonce"></param>
+        /// <param name="nonceOfs"></param>
+        void RandomNonce(byte[] nonce, int nonceOfs);
+
 
         /// <summary>
         /// Debugging... return a 'hello' string

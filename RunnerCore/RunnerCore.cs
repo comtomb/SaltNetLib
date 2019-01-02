@@ -36,7 +36,47 @@ namespace Runner
     {
         public static void Main(string[] args)
         {
+            var cryptoBox = BoxCurve25519XSalsa20Poly1305Factory.CreateInstance();
 
+            byte[] aliceSecretKey;
+            byte[] alicePublicKey;
+            byte[] bobSecretKey;
+            byte[] bobPublicKey;
+
+            // create key pairs for Alice and Bob
+            cryptoBox.CreateKeyPair(out alicePublicKey, out aliceSecretKey);
+            cryptoBox.CreateKeyPair(out bobPublicKey, out bobSecretKey);
+
+
+            // create a shared key to send from Alice to Bob
+            var sharedKeyAlice2Bob = cryptoBox.CreateSharedKey(bobPublicKey, aliceSecretKey);
+            // a message
+            string sendMessage = "the quick brown fox jumped over the lazy dog";
+            Console.WriteLine("Alice want's to send: " + sendMessage);
+
+            // convert to bytes
+            var sendMessagBytes = Encoding.ASCII.GetBytes(sendMessage);
+
+            // a 24 byte nonce
+            var nonce = cryptoBox.RandomNonce();
+            var encrypted = cryptoBox.EncryptSymmetric(sharedKeyAlice2Bob, nonce, sendMessagBytes);
+
+            Console.WriteLine("encrypted message (16 byte Poly1305 MAC, followed by " + sendMessage.Length + " byte XSALSA20 encrypted text and 24 byte nonce");
+            for (int i = 0; i < encrypted.Length; i++)
+                Console.Write(encrypted[i].ToString("X2"));
+            for (int i = 0; i < nonce.Length; i++)
+                Console.Write(nonce[i].ToString("X2"));
+            Console.WriteLine();
+
+
+            // now let Bob calculate the shared key
+            var sharedKeyBobFromAlice = cryptoBox.CreateSharedKey(alicePublicKey, bobSecretKey); // of course equal to sharedKeyAlice2Bob...
+            var decrypted = cryptoBox.DecryptSymmetric(sharedKeyBobFromAlice, nonce, encrypted);
+            string receivedMessage = Encoding.ASCII.GetString(decrypted);
+            Console.WriteLine("bob received: " + receivedMessage);
+            
+
+            
         }
     }
 }
