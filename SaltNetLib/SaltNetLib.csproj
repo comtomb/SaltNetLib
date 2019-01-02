@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
+    <Platforms>AnyCPU</Platforms>
+    <Authors>tomb</Authors>
+    <Company>tomb</Company>
+    <Product>SaltNetLib</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.2.1</Version>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <FileVersion>1.2.1.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;TFM_NETSTANDARD20;CPU_ANY</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;TFM_NETSTANDARD20;CPU_ANY</DefineConstants>
+    <DocumentationFile>C:\Users\Thomas\develop\SaltNetLib\SaltNetLib\bin\Release\SaltNetLib.xml</DocumentationFile>
+    <OutputPath></OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net451|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;TFM_NET451;CPU_ANY</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;TFM_NET451;CPU_ANY</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Curve25519\" />
+    <Folder Include="XSalsa20\" />
+    <Folder Include="Poly1305\" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ByteUtilNetLib" Version="1.2.0" />
+  </ItemGroup>
+
+</Project>
