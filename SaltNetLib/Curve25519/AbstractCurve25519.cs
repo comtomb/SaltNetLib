@@ -25,7 +25,7 @@ SOFTWARE.
 using System;
 using System.Globalization;
 using System.IO;
-using TomB.ByteUtilNetLib;
+using TomB.Util;
 
 namespace TomB.SaltNet.Curve25519
 {

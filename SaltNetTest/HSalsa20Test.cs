@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
-using TomB.ByteUtilNetLib;
+using TomB.Util;
 
 namespace SaltNetLibTest
 {

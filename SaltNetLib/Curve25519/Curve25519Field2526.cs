@@ -22,10 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 using System;
-using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Numerics;
-using TomB.ByteUtilNetLib;
+using TomB.Util;
 using TomB.SaltNet;
 using TomB.SaltNet.Curve25519;
 

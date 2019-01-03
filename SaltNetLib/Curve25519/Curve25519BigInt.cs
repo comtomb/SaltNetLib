@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using System.Runtime.CompilerServices;
-using TomB.ByteUtilNetLib;
+using TomB.Util;
 
 namespace TomB.SaltNet.Curve25519
 {

@@ -23,6 +23,7 @@ SOFTWARE.
 */
 using System;
 using System.Security.Cryptography;
+using TomB.Util;
 
 namespace TomB.SaltNet
 {
@@ -50,7 +51,7 @@ namespace TomB.SaltNet
         {
             var b = GetBytes(4);
             b[0] &= 0x7f;
-            return ByteUtilNetLib.ByteUtil.GetI32BE(b, 0);
+            return ByteUtil.GetI32BE(b, 0);
         }
         /// <summary>
         /// positive single random from 0 to Int64.MaxValue
@@ -60,7 +61,7 @@ namespace TomB.SaltNet
         {
             var b = GetBytes(0);
             b[0] &= 0x7f;
-            return ByteUtilNetLib.ByteUtil.GetI64BE(b, 0);
+            return ByteUtil.GetI64BE(b, 0);
         }
         /// <summary>
         /// randomized array
